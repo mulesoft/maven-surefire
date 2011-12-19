@@ -19,16 +19,8 @@ package org.apache.maven.surefire.suite;
  * under the License.
  */
 
-import org.apache.maven.surefire.Surefire;
-import org.apache.maven.surefire.report.ReporterManagerFactory;
-import org.apache.maven.surefire.util.SurefireDirectoryScanner;
-import org.apache.maven.surefire.report.ReportEntry;
-import org.apache.maven.surefire.report.ReporterException;
-import org.apache.maven.surefire.report.ReporterManager;
-import org.apache.maven.surefire.testset.SurefireTestSet;
-import org.apache.maven.surefire.testset.TestSetFailedException;
-
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,9 +28,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.maven.surefire.Surefire;
+import org.apache.maven.surefire.report.ReportEntry;
+import org.apache.maven.surefire.report.ReporterException;
+import org.apache.maven.surefire.report.ReporterManager;
+import org.apache.maven.surefire.report.ReporterManagerFactory;
+import org.apache.maven.surefire.testset.SurefireTestSet;
+import org.apache.maven.surefire.testset.TestSetFailedException;
+import org.apache.maven.surefire.util.SurefireDirectoryScanner;
+
 public abstract class AbstractDirectoryTestSuite
     implements SurefireTestSuite
 {
+    private static final String ACCEPTED_ANNOTATIONS = "includedAnnotations";
+    private static final String REJECTED_ANNOTATIONS = "excludedAnnotations";
+
     protected static ResourceBundle bundle = ResourceBundle.getBundle( Surefire.SUREFIRE_BUNDLE_NAME );
 
     protected Map testSets;
@@ -64,9 +68,11 @@ public abstract class AbstractDirectoryTestSuite
 
         Class[] locatedClasses = surefireDirectoryScanner.locateTestClasses( classLoader);
 
-        for ( int i = 0; i < locatedClasses.length; i++ )
+        Class[] filteredClasses = filterClassesByAnnotations(locatedClasses);
+
+        for ( int i = 0; i < filteredClasses.length; i++ )
         {
-            Class testClass = locatedClasses[i];
+            Class testClass = filteredClasses[i];
             SurefireTestSet testSet = createTestSet( testClass, classLoader );
 
                 if ( testSet == null )
@@ -84,6 +90,37 @@ public abstract class AbstractDirectoryTestSuite
         }
 
         return Collections.unmodifiableMap( testSets );
+    }
+
+    private Class[] filterClassesByAnnotations(Class[] locatedClasses)
+    {
+        List filteredClasses;
+
+        try
+        {
+            AnnotationFilterBuilder builder = new AnnotationFilterBuilder();
+            AnnotationFilter filter = builder.build(System.getProperty(ACCEPTED_ANNOTATIONS), System.getProperty(REJECTED_ANNOTATIONS));
+
+            filteredClasses = filter.filter(locatedClasses);
+        }
+        catch (Exception e) {
+            System.out.println("MONCHO Error: " + e.getMessage());
+            filteredClasses = new ArrayList();
+        }
+
+        return copyListToArray(filteredClasses);
+    }
+
+    private Class[] copyListToArray(List classesToFilter)
+    {
+        Class[] filteredClasses = new Class[classesToFilter.size()];
+        for (int i =0; i <classesToFilter.size(); i++)
+        {
+            // There is no a default way to log messages...
+            //System.out.println("Class: " + classesToFilter.get(i).getClass().getName());
+            filteredClasses[i] = (Class) classesToFilter.get(i);
+        }
+        return filteredClasses;
     }
 
     protected abstract SurefireTestSet createTestSet( Class testClass, ClassLoader classLoader )

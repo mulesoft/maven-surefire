@@ -1,5 +1,17 @@
 package org.apache.maven.plugin.surefire;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -27,18 +39,6 @@ import org.apache.maven.surefire.report.ForkingConsoleReporter;
 import org.apache.maven.surefire.report.XMLReporter;
 import org.apache.maven.toolchain.Toolchain;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Abstract base class for running tests using Surefire.
@@ -690,6 +690,15 @@ public abstract class AbstractSurefireMojo
             String key = (String) it.next();
             String value = userProperties.getProperty( key );
             getInternalSystemProperties().setProperty( key, value );
+        }
+
+        Properties originalSystemProperties = getOriginalSystemProperties();
+
+        if (originalSystemProperties.contains("includedAnnotations")) {
+            getInternalSystemProperties().setProperty("includedAnnotations", (String) originalSystemProperties.get("includedAnnotations"));
+        }
+        if (originalSystemProperties.contains("excludedAnnotations")) {
+            getInternalSystemProperties().setProperty("excludedAnnotations", (String) originalSystemProperties.get("excludedAnnotations"));
         }
 
         getInternalSystemProperties().setProperty( "basedir", getBasedir().getAbsolutePath() );
