@@ -256,6 +256,6 @@
         <connection>scm:git:git://github.com:mulesoft/maven-surefire.git</connection>
         <developerConnection>scm:git:git@github.com:mulesoft/maven-surefire.git</developerConnection>
         <url>http://github.com/mulesoft/maven-surefire</url>
-        <tag>2.6-MULE-1-SNAPSHOT</tag>
+        <tag>2.6-MULE-0</tag>
     </scm>
 </project>
