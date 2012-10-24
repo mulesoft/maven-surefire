@@ -54,7 +54,6 @@ public class AnnotationFilterBuilder
                 {
                     // There is no a default way to log messages...
                     System.out.println("Ignoring test filter. Class not found" + className);
-                    throw new IllegalArgumentException("Error parsing class names", e);
                 }
             }
         }
