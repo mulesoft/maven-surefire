@@ -697,8 +697,14 @@ public abstract class AbstractSurefireMojo
         if (originalSystemProperties.contains("includedAnnotations")) {
             getInternalSystemProperties().setProperty("includedAnnotations", (String) originalSystemProperties.get("includedAnnotations"));
         }
+        else if (getIncludedAnnotations() != null && getIncludedAnnotations().size() > 0) {
+            getInternalSystemProperties().setProperty("includedAnnotations", join(getIncludedAnnotations(), ":"));
+        }
         if (originalSystemProperties.contains("excludedAnnotations")) {
             getInternalSystemProperties().setProperty("excludedAnnotations", (String) originalSystemProperties.get("excludedAnnotations"));
+        }
+        else if (getExcludedAnnotations() != null && getExcludedAnnotations().size() > 0) {
+            getInternalSystemProperties().setProperty("excludedAnnotations", join(getExcludedAnnotations(), ":"));
         }
 
         getInternalSystemProperties().setProperty( "basedir", getBasedir().getAbsolutePath() );
@@ -720,6 +726,20 @@ public abstract class AbstractSurefireMojo
                 System.setProperty( key, value );
             }
         }
+    }
+
+    /**
+     * Joins the list as a String
+     */
+    private String join(List values, String separator) {
+        StringBuffer buffer = new StringBuffer();
+        String sep = "";
+        for(int i=0; i<values.size();i++) {
+            buffer.append(sep);
+            buffer.append(values.get(i));
+            sep = separator;
+        }
+        return buffer.toString();
     }
 
     private Properties getUserProperties()

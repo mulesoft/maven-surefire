@@ -549,6 +549,22 @@ public class SurefirePlugin
      */
     private String objectFactory;
 
+    /**
+     * List of annotations to be used to filter tests.
+     * If defined, only tests that have these annotations will be executed
+     *
+     * @parameter
+     */
+    private List includedAnnotations;
+
+    /**
+     * List of annotations to be used to filter out tests.
+     * If defined, only tests that don't have these annotations will be executed
+     *
+     *  @parameter
+     */
+    private List excludedAnnotations;
+
 
     /** @parameter default-value="${session.parallel}" */
     private Boolean parallelMavenExecution;
@@ -557,6 +573,7 @@ public class SurefirePlugin
      * @component
      */
     private ToolchainManager toolchainManager;
+
 
 
     public void execute()
@@ -1219,6 +1236,25 @@ public class SurefirePlugin
     {
         return parallelMavenExecution  != null && parallelMavenExecution.booleanValue();
     }
-    
 
+
+    public List getExcludedAnnotations()
+    {
+        return excludedAnnotations;
+    }
+
+    public List getIncludedAnnotations()
+    {
+        return includedAnnotations;
+    }
+
+    public void setIncludedAnnotations(List includedAnnotations)
+    {
+        this.includedAnnotations = includedAnnotations;
+    }
+
+    public void setExcludedAnnotations(List excludedAnnotations)
+    {
+        this.excludedAnnotations = excludedAnnotations;
+    }
 }

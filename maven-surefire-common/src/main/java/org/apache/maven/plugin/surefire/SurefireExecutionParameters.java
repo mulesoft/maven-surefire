@@ -250,4 +250,11 @@ public interface SurefireExecutionParameters
 
     boolean isMavenParallel();
 
+    public List getExcludedAnnotations();
+
+    List getIncludedAnnotations();
+
+    void setIncludedAnnotations(List includedAnnotations);
+
+    void setExcludedAnnotations(List excludedAnnotations);
 }
