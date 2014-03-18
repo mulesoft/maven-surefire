@@ -699,12 +699,16 @@ public abstract class AbstractSurefireMojo
         }
         else if (getIncludedAnnotations() != null && getIncludedAnnotations().size() > 0) {
             getInternalSystemProperties().setProperty("includedAnnotations", join(getIncludedAnnotations(), ":"));
+            // make sure this always gets saved as a system variable, even when forking!
+            System.setProperty("includedAnnotations", join(getIncludedAnnotations(), ":"));
         }
         if (originalSystemProperties.contains("excludedAnnotations")) {
             getInternalSystemProperties().setProperty("excludedAnnotations", (String) originalSystemProperties.get("excludedAnnotations"));
         }
         else if (getExcludedAnnotations() != null && getExcludedAnnotations().size() > 0) {
             getInternalSystemProperties().setProperty("excludedAnnotations", join(getExcludedAnnotations(), ":"));
+            // make sure this always gets saved as a system variable, even when forking!
+            System.setProperty("excludedAnnotations", join(getExcludedAnnotations(), ":"));
         }
 
         getInternalSystemProperties().setProperty( "basedir", getBasedir().getAbsolutePath() );
