@@ -248,9 +248,9 @@
 
     <distributionManagement>
         <repository>
-            <id>mule-deps</id>
-            <name>Mule Dependencies</name>
-            <url>dav:https://dav.codehaus.org/dist/mule/dependencies/maven2</url>
+            <id>mule-releases</id>
+            <name>Mule Releases</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/releases</url>
         </repository>
     </distributionManagement>
 
